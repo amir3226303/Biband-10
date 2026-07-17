@@ -25,11 +25,22 @@ async function saateBaglan() {
     console.log("Veri karakteristiği alınıyor...");
     const characteristic = await service.getCharacteristic(DIRECTION_CHARACTERISTIC_UUID);
     
-    // Yönlendirme verisini oku veya dinle gibi diğer işlemler buraya eklenecek
-    
+    // Bildirimleri dinlemeye başla ve veriyi işle
+    characteristic.addEventListener('characteristicvaluechanged', yönlendirmeVerisiniIsle);
+    await characteristic.startNotifications();
+    console.log("Bildirimler başlatıldı.");
+
   } catch (error) {
     console.error(error);
   }
+}
+
+function yönlendirmeVerisiniIsle(event) {
+    const value = event.target.value;
+    const decoder = new TextDecoder('utf-8');
+    const directionData = decoder.decode(value);
+    console.log("Gelen veri: ", directionData);
+    // Gelen veriyi burada işleyebilirsiniz
 }
 
 saateBaglan();
